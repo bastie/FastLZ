@@ -1,75 +1,6 @@
-# DotFastLZ
-*DotFastLZ is C# fastlz, a port of [ariya/FastLZ](https://github.com/ariya/FastLZ)*  
-*DotFastLZ can be used in Unity3D, C# server, network packet, game data*
-
----
-
-![GitHub License](https://img.shields.io/github/license/ikpil/DotFastLZ?style=for-the-badge)
-![Languages](https://img.shields.io/github/languages/top/ikpil/DotFastLZ?style=for-the-badge)
-![GitHub repo size](https://img.shields.io/github/repo-size/ikpil/DotFastLZ?style=for-the-badge)
-[![GitHub Repo stars](https://img.shields.io/github/stars/ikpil/DotFastLZ?style=for-the-badge&logo=github)](https://github.com/ikpil/DotFastLZ)
-[![GitHub Actions Workflow Status](https://img.shields.io/github/actions/workflow/status/ikpil/DotFastLZ/dotnet.yml?style=for-the-badge&logo=github)](https://github.com/ikpil/DotFastLZ/actions/workflows/dotnet.yml)
-[![GitHub Actions Workflow Status](https://img.shields.io/github/actions/workflow/status/ikpil/DotFastLZ/codeql.yml?style=for-the-badge&logo=github&label=CODEQL)](https://github.com/ikpil/DotFastLZ/actions/workflows/codeql.yml)
-[![GitHub commit activity](https://img.shields.io/github/commit-activity/m/ikpil/DotFastLZ?style=for-the-badge&logo=github)](https://github.com/ikpil/DotFastLZ/commits)
-[![GitHub issues](https://img.shields.io/github/issues-raw/ikpil/DotFastLZ?style=for-the-badge&logo=github&color=44cc11)](https://github.com/ikpil/DotFastLZ/issues)
-[![GitHub closed issues](https://img.shields.io/github/issues-closed-raw/ikpil/DotFastLZ?style=for-the-badge&logo=github&color=a371f7)](https://github.com/ikpil/DotFastLZ/issues)
-[![NuGet Version](https://img.shields.io/nuget/vpre/DotFastLZ.Compression?style=for-the-badge&logo=nuget)](https://www.nuget.org/packages/DotFastLZ.Compression)
-~~~~[![NuGet Downloads](https://img.shields.io/nuget/dt/DotFastLZ.Compression?style=for-the-badge&logo=nuget)](https://www.nuget.org/packages/DotFastLZ.Compression)
-[![GitHub Sponsors](https://img.shields.io/github/sponsors/ikpil?style=for-the-badge&logo=GitHub-Sponsors&link=https%3A%2F%2Fgithub.com%2Fsponsors%2Fikpil)](https://github.com/sponsors/ikpil)
-
----
-
-## Usage: DotFastLZ.Compression
-```csharp
-for (int level = 1; level <= 2; ++level)
-{
-    // compress
-    var input = GetInputSource();
-    var estimateSize = FastLZ.EstimateCompressedSize(input.Length);
-    var comBuf = new byte[estimateSize];
-    var comBufSize = FastLZ.CompressLevel(level, input, input.Length, comBuf);
-
-    // decompress
-    byte[] decBuf = new byte[input.Length];
-    var decBufSize = FastLZ.Decompress(comBuf, comBufSize, decBuf, decBuf.Length);
-
-    // compare
-    var compareSize = FastLZ.MemCompare(input, 0, decBuf, 0, decBufSize);
-
-    // check
-    Assert.That(decBufSize, Is.EqualTo(input.Length), "decompress size error");
-    Assert.That(compareSize, Is.EqualTo(input.Length), "decompress compare error");
-}
-```
-
-## Usage: DotFastLZ.Compression.Packaging
-```csharp
-const string targetFileName = "soruce.txt";
-string packagingFileName = targetFileName + ".fastlz";
-
-// pack/unpack
-SixPack.PackFile(2, targetFileName, packagingFileName, Console.Write);
-SixPack.UnpackFile(packagingFileName, Console.Write);
-```
-
-## Usage: 6pack
-```shell
-$ dotnet tool install --global 6pack
-$ 6pack --help
-
-6pack: high-speed file compression tool
-Copyright (C) Ariya Hidayat, Choi Ikpil(ikpil@naver.com)
- - https://github.com/ikpil/DotFastLZ
-
-Usage: 6pack [options] input-file output-file
-
-Options:
-  -1    compress faster
-  -2    compress better
-  -v    show program version
-  -d    decompression (default for .fastlz extension)
-  -mem  check in-memory compression speed
-```
+[![License](https://img.shields.io/badge/License-MIT-blue.svg)](https://opensource.org/licenses/MIT)
+[![Code style](https://github.com/ariya/fastlz/workflows/Code%20style/badge.svg)](https://github.com/ariya/fastlz/actions)
+[![Address Sanitizer](https://github.com/ariya/fastlz/workflows/Address%20Sanitizer/badge.svg)](https://github.com/ariya/fastlz/actions)
 
 ## Overview
 
@@ -77,15 +8,77 @@ FastLZ (MIT license) is an ANSI C/C90 implementation of [Lempel-Ziv 77 algorithm
 
 The focus for FastLZ is a very fast compression and decompression, doing that at the cost of the compression ratio. As an illustration, the comparison with zlib when compressing [enwik8](http://www.mattmahoney.net/dc/textdata.html) (also in [more details](https://github.com/inikep/lzbench)):
 
-|         | Ratio | Compression | Decompression |
-|---------|-------|-------------|---------------|
-| FastLZ  | 54.2% | 159 MB/s    | 305 MB/s      |
-| zlib -1 | 42.3% | 50 MB/s     | 184 MB/s      |
-| zlib -9 | 36.5% | 11 MB/s     | 185 MB/s      |
+||Ratio|Compression|Decompression
+|--|--|--|--|
+|FastLZ |54.2%|159 MB/s|305 MB/s|
+|zlib -1|42.3%|50 MB/s|184 MB/s|
+|zlib -9|36.5%|11 MB/s|185 MB/s|
 
 FastLZ is used by many software products, from a number of games (such as [Death Stranding](https://en.wikipedia.org/wiki/Death_Stranding)) to various open-source projects ([Godot Engine](https://godotengine.org/), [Facebook HHVM](https://hhvm.com/), [Apache Traffic Server](https://trafficserver.apache.org/), [Calligra Office](https://www.calligra.org/), [OSv](http://osv.io/), [Netty](https://netty.io/), etc). It even serves as the basis for other compression projects like [BLOSC](https://blosc.org/).
 
 For other implementations of byte-aligned LZ77, take a look at [LZ4](https://lz4.github.io/lz4/), [Snappy](http://google.github.io/snappy/), [Density](https://github.com/centaurean/density), [LZO](http://www.oberhumer.com/opensource/lzo/), [LZF](http://oldhome.schmorp.de/marc/liblzf.html), [LZJB](https://en.wikipedia.org/wiki/LZJB), [LZRW](http://www.ross.net/compression/lzrw1.html), etc.
+
+## Usage
+
+FastLZ can be used directly in any C/C++ applications. For other programming languages/environments, use the corresponding binding:
+
+* [Rust](https://crates.io/crates/fastlz), available on Crates: `cargo install fastlz`
+* [Python](https://pypi.org/project/fastlz/), available on PyPi: `pip install fastlz`
+* [JavaScript](https://www.npmjs.com/package/fastlz), available on npm: `npm install fastlz`
+* [Ruby](https://rubygems.org/gems/fastlz), available on Rubygems: `gem install fastlz`
+* Lua via [github.com/oneoo/lua-fastlz](https://github.com/oneoo/lua-fastlz)
+
+FastLZ consists of only two files: `fastlz.h` and `fastlz.c`. Just add these files to your project in order to use FastLZ. For the detailed information on the API to perform compression and decompression, see `fastlz.h`.
+
+For [Vcpkg](https://github.com/microsoft/vcpkg) users, FastLZ is [already available](https://github.com/microsoft/vcpkg): `vcpkg install fastlz`.
+
+A simple file compressor called `6pack` is included as an example on how to use FastLZ. The corresponding decompressor is `6unpack`.
+
+FastLZ supports any standard-conforming ANSI C/C90 compiler, including the popular ones such as [GCC](https://gcc.gnu.org/), [Clang](https://clang.llvm.org/), [Visual Studio](https://visualstudio.microsoft.com/vs/features/cplusplus/), and even [Tiny CC](https://bellard.org/tcc/). FastLZ works well on a number of architectures (32-bit and 64-bit, big endian and little endian), from Intel/AMD, PowerPC, System z, ARM, MIPS, and RISC-V.
+
+The continuous integration system runs an extensive set of compression-decompression round trips on the following systems:
+
+
+For more details, check the corresponding [GitHub Actions build logs](https://github.com/ariya/FastLZ/actions).
+
+|                      |                                                                                                         |                                                                                                   |                                                                                             |
+|----------------------|--------------------------------------------------------------------------------------------------------:|--------------------------------------------------------------------------------------------------:|--------------------------------------------------------------------------------------------:|
+| **amd64**            | **Linux**                                                                                               | **Windows**                                                                                       | **macOS**                                                                                   |
+|                  GCC | ![amd64_linux_gcc](https://github.com/ariya/FastLZ/workflows/amd64_linux_gcc/badge.svg)                 | ![amd64_windows_gcc](https://github.com/ariya/FastLZ/workflows/amd64_windows_gcc/badge.svg)       | ![amd64_macos_gcc](https://github.com/ariya/FastLZ/workflows/amd64_macos_gcc/badge.svg)     |
+|                Clang | ![amd64_linux_clang](https://github.com/ariya/FastLZ/workflows/amd64_linux_clang/badge.svg)             | ![amd64_windows_clang](https://github.com/ariya/FastLZ/workflows/amd64_windows_clang/badge.svg)   | ![amd64_macos_clang](https://github.com/ariya/FastLZ/workflows/amd64_macos_clang/badge.svg) |
+|               TinyCC | ![amd64_linux_tcc](https://github.com/ariya/FastLZ/workflows/amd64_linux_tcc/badge.svg)                 | ![amd64_windows_tcc](https://github.com/ariya/FastLZ/workflows/amd64_windows_tcc/badge.svg)       |                                                                                             |
+|              VS 2019 |                                                                                                         | ![amd64_windows_vs2019](https://github.com/ariya/FastLZ/workflows/amd64_windows_vs2019/badge.svg) |                                                                                             |
+| **i686**             | **Linux**                                                                                               | **Windows**                                                                                       | **macOS**                                                                                   |
+|                  GCC | ![i686_linux_gcc](https://github.com/ariya/FastLZ/workflows/i686_linux_gcc/badge.svg)                   |                                                                                                   |                                                                                             |
+|                Clang | ![i686_linux_clang](https://github.com/ariya/FastLZ/workflows/i686_linux_clang/badge.svg)               |                                                                                                   |                                                                                             |
+|               TinyCC |                                                                                                         | ![i686_windows_tcc](https://github.com/ariya/FastLZ/workflows/i686_windows_tcc/badge.svg)         |                                                                                             |
+|              VS 2019 |                                                                                                         | ![i686_windows_vs2019](https://github.com/ariya/FastLZ/workflows/i686_windows_vs2019/badge.svg)   |                                                                                             |
+| **i586**             | **Linux**                                                                                               | **DOS**                                                                                           |                                                                                             |
+|                  GCC |                                                                                                         | ![i586_dos_gcc_cross](https://github.com/ariya/FastLZ/workflows/i586_dos_gcc_cross/badge.svg)     |                                                                                             |
+|                      | **Linux**                                                                                               |                                                                                                   |                                                                                             |
+| **powerpc**          |                                                                                                         |                                                                                                   |                                                                                             |
+|                  GCC |  ![powerpc_linux_gcc](https://github.com/ariya/FastLZ/workflows/powerpc_linux_gcc/badge.svg)            |                                                                                                   |                                                                                             |
+| **ppc64(le)**        |                                                                                                         |                                                                                                   |                                                                                             |
+|                  GCC |  ![ppc64_linux_gcc](https://github.com/ariya/FastLZ/workflows/ppc64_linux_gcc/badge.svg)                |                                                                                                   |                                                                                             |
+|                  GCC |  ![ppc64le_linux_gcc](https://github.com/ariya/FastLZ/workflows/ppc64le_linux_gcc/badge.svg)            |                                                                                                   |                                                                                             |
+| **s390x**            |                                                                                                         |                                                                                                   |                                                                                             |
+|                  GCC |  ![s390x_linux_gcc](https://github.com/ariya/FastLZ/workflows/s390x_linux_gcc/badge.svg)                |                                                                                                   |                                                                                             |
+| **armhf**            |                                                                                                         |                                                                                                   |                                                                                             |
+|                  GCC |  ![armhf_linux_gcc](https://github.com/ariya/FastLZ/workflows/armhf_linux_gcc/badge.svg)                |                                                                                                   |                                                                                             |
+| **arm64**            |                                                                                                         |                                                                                                   |                                                                                             |
+|                  GCC |  ![arm64_linux_gcc](https://github.com/ariya/FastLZ/workflows/arm64_linux_gcc/badge.svg)                |                                                                                                   |                                                                                             |
+| **mips(el)**         |                                                                                                         |                                                                                                   |                                                                                             |
+|                  GCC |  ![mipsel_linux_gcc](https://github.com/ariya/FastLZ/workflows/mipsel_linux_gcc/badge.svg)              |                                                                                                   |                                                                                             |
+|                  GCC |  ![mips_linux_gcc](https://github.com/ariya/FastLZ/workflows/mips_linux_gcc/badge.svg)                  |                                                                                                   |                                                                                             |
+| **mips64(el)**       |                                                                                                         |                                                                                                   |                                                                                             |
+|                  GCC |  ![mips64el_linux_gcc](https://github.com/ariya/FastLZ/workflows/mips64el_linux_gcc/badge.svg)          |                                                                                                   |                                                                                             |
+|                  GCC |  ![mips64_linux_gcc](https://github.com/ariya/FastLZ/workflows/mips64_linux_gcc/badge.svg)              |                                                                                                   |                                                                                             |
+|  **riscv**           |                                                                                                         |                                                                                                   |                                                                                             |
+|                  GCC |  ![riscv_linux_gcc](https://github.com/ariya/FastLZ/workflows/riscv_linux_gcc/badge.svg)                |                                                                                                   |                                                                                             |
+| **riscv64**          |                                                                                                         |                                                                                                   |                                                                                             |
+|                  GCC |  ![riscv64_linux_gcc](https://github.com/ariya/FastLZ/workflows/riscv64_linux_gcc/badge.svg)            |                                                                                                   |                                                                                             |
+
+
 
 ## Block Format
 
@@ -107,11 +100,11 @@ FastLZ Level 1 implements LZ77 compression algorithm with 8 KB sliding window an
 The compressed block consists of one or more **instructions**.
 Each instruction starts with a 1-byte opcode, 2-byte opcode, or 3-byte opcode.
 
-| Instruction type | Opcode[0]                                        | Opcode[1]           | Opcode[2]           |
-|------------------|--------------------------------------------------|---------------------|---------------------|
-| Literal run      | `000`, L&#x2085;-L&#x2080;                       | -                   | -                   |
-| Short match      | M&#x2082;-M&#x2080;, R&#x2081;&#x2082;-R&#x2088; | R&#x2087;-R&#x2080; | -                   |
-| Long match       | `111`, R&#x2081;&#x2082;-R&#x2088;               | M&#x2087;-M&#x2080; | R&#x2087;-R&#x2080; |
+| Instruction type | Opcode[0] | Opcode[1] | Opcode[2]
+|-----------|------------------|--------------------|--|
+| Literal run | `000`, L&#x2084;-L&#x2080; | -|- |
+| Short match | M&#x2082;-M&#x2080;, R&#x2081;&#x2082;-R&#x2088; | R&#x2087;-R&#x2080; | - |
+| Long match | `111`, R&#x2081;&#x2082;-R&#x2088; | M&#x2087;-M&#x2080; | R&#x2087;-R&#x2080; |
 
 Note that the _very first_ instruction in a compressed block is always a literal run.
 
@@ -208,3 +201,7 @@ void fastlz_level1_decompress(const uint8_t* input, int length, uint8_t* output)
   }
 }
 ```
+
+### Block Format for Level 2
+
+(To be written)
